@@ -1,0 +1,2 @@
+# Speaker diarization (pyannote) dependencies — add when python/diarize.py is configured.
+# Transcription uses the Groq API via Laravel; no local Whisper/torch stack needed.

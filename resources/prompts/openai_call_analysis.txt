@@ -1,0 +1,48 @@
+Analyze the provided customer-service call transcript, which may be in Azerbaijani, Russian, or English (possibly mixed languages) and labeled with "operator" (call-center agent) and "musteri" (customer). Evaluate the wording, phrasing, and word choice based solely on the transcript text, understanding that some automatic speech recognition errors may be present; do not overinterpret single questionable words but consider context for all judgments.
+
+Continue reasoning step-by-step to assess:
+- Overall politeness and professionalism (courtesy)
+- Level and intensity of rudeness or disrespect, including overt or subtle forms (sarcasm, dismissiveness, contempt)
+- Emotional tone: whether the conversation is calm/positive or displays agitation, frustration, or negativity
+- Identification of every instance of inappropriate, offensive, vulgar, or rude language/expressions, including:
+  - Profanity, insults, slurs, sarcastic put-downs
+  - Context-dependent rudeness (e.g., use of "zibil", "axmaq", etc.)
+  - Contemptuous or dismissive idioms about the company, product, or service (e.g., "zibilə vurmaq", "zibil", or phrases implying worthlessness/scam)
+  - Do NOT include standard complaints (e.g., "the balance is being deducted incorrectly") unless they're phrased contemptuously
+
+Special rules:
+- Everyday friendly Azerbaijani address forms ("canım", "qardaş", "bacı") are not inherently rude; judge inappropriate use by context
+- If sarcasm is detected, reflect this in rudeness_score and emotional_tone_score
+- Scores consistency: no rudeness = rudeness_score close to 0; very polite = courtesy_score near 90-100
+- Output should include only WHAT IS PRESENT IN THE TRANSCRIPT—do not invent or presume content
+
+Output only a raw JSON object with these fields (no other text or formatting, no markdown fences):
+- courtesy_score (0-100 integer)
+- rudeness_score (0-100 integer)
+- emotional_tone_score (0-100 integer)
+- inappropriate_expressions (array of objects: "speaker" [either "operator" or "musteri"], "text" [exact expression as present in transcript]); return an empty array if none found
+
+Examples (real transcripts will be much longer and more complex than these; "text" is shown exactly as it would be present):
+Example 1:
+Input:
+operator: Salam, necəsiniz?
+musteri: Yaxşıyam, təşəkkür edirəm.
+operator: Sualınızı buyurun.
+musteri: Sualım yoxdur, sadəcə məlumat almaq istədim.
+operator: Çox sağ olun, gözəl gün arzulayıram.
+
+Output:
+{"courtesy_score": 92, "rudeness_score": 0, "emotional_tone_score": 10, "inappropriate_expressions": []}
+
+Example 2:
+Input:
+operator: Salam. Necə kömək edə bilərəm?
+musteri: Nəvaxt düzgün işləyəcəksiniz? Bu servis tam zibilə dönüb, heç nəyinizi düz eləyə bilmirsiz.
+operator: Bağışlayın, narahatlığa görə üzr istəyirik.
+musteri: Həmişə üzr istəyirsiniz, heç faydası yoxdur. Vallah, bu şirkət zibilin içindədilər!
+operator: Yenidən yoxlayaq. Səbrinizə görə təşəkkür edirik.
+
+Output:
+{"courtesy_score": 70, "rudeness_score": 60, "emotional_tone_score": 65, "inappropriate_expressions": [{"speaker":"musteri","text":"Bu servis tam zibilə dönüb"}, {"speaker":"musteri","text":"bu şirkət zibilin içindədilər"}]}
+
+Important: Output must strictly follow the rules above, use reasoning first before scoring, include every present inappropriate or offensive expression (verbatim), and return only the specified JSON structure with no additional text.
